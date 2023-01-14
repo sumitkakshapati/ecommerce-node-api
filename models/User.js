@@ -1,5 +1,5 @@
-const mongoose = require("mongoose");
-const validator = require("validator");
+import mongoose from "mongoose";
+import validator from "validator";
 
 const UserSchema = new mongoose.Schema(
   {
@@ -40,22 +40,10 @@ const UserSchema = new mongoose.Schema(
       required: true,
       maxLength: 10,
     },
-    street: {
+    address: {
       type: String,
       default: "",
-    },
-    zip: {
-      type: String,
-      default: "",
-    },
-    city: {
-      type: String,
-      default: "",
-    },
-    country: {
-      type: String,
-      default: "",
-    },
+    }
   },
   {
     timestamps: true,
@@ -63,4 +51,4 @@ const UserSchema = new mongoose.Schema(
 );
 
 const User = mongoose.model("User", UserSchema);
-module.exports = User;
+export default User;

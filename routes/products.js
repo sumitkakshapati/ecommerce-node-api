@@ -1,61 +1,21 @@
-const router = require("express").Router();
-const Product = require("../models/Product");
-const bcrypt = require("bcrypt");
+import express from 'express';
+import { authenticate } from '../middleware/authenticate.js';
+import * as productService from '../services/product_service.js';
+const router = express.Router();
 
 //Create
-router.post("/products/create", async (req, res) => {
-  const newProduct = new Product(req.body);
-  try {
-    const saveProduct = await newProduct.save();
-    res.status(200).send(saveProduct);
-  } catch (err) {
-    res.status(400).json(err);
-  }
-});
+router.post("/products/create", authenticate, productService.createProduct);
 
 //Read
-router.get("/products", async (req, res) => {
-    console.log("read test");
-  try {
-    const products = await Product.find({});
-    res.send(products);
-  } catch (err) {
-    res.status(500).send(err);
-  }
-});
+router.get("/products", authenticate, productService.getAllProducts);
+
+//Get Single Products
+router.get("/products/:id", authenticate, productService.getSingleProduct);
 
 //Update
-router.put("/products/:id", async (req, res) => {
-  if (req.body.userId == req.params.id) {
-    try {
-      const updatedProduct = await Product.findByIdAndUpdate(
-        req.params.id,
-        {
-          $set: req.body,
-        },
-        { new: true }
-      );
-      res.status(500).json(updatedProduct);
-    } catch (err) {
-      res.status(500).send(err);
-    }
-  } else {
-    res.status(401).send("You can only Update your Profile");
-  }
-});
+router.put("/products/:id", authenticate, productService.updateSingleProduct);
 
 //Delete
-router.delete('/products/:id',async(req,res)=>{
-    try {
-        const products = await Product.findByIdAndDelete(req.params.id)
-        if(!products){
-            return res.status(404).send();
-        }
-        res.status(200).send(user);
-        
-    } catch (e) {
-        res.status(500).send();
-    }
-})
+router.delete('/products/:id', authenticate, productService.deleteSingleProducts);
 
-module.exports = router;
+export default router;
