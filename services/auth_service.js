@@ -7,6 +7,22 @@ const router = express.Router()
 
 export async function registerUser(req, res, next) {
     try {
+        const doesEmailExist = await User.findOne({
+            email: req.body.email,
+        });
+        if (doesEmailExist) {
+            res.status(400).json({ success: false, message: "Email already exists" });
+            return;
+        }
+
+        const doesPhoneExist = await User.findOne({
+            phone: req.body.phone,
+        });
+        if (doesPhoneExist) {
+            res.status(400).json({ success: false, message: "Phone already exists" });
+            return;
+        }
+
         const salt = await bcrypt.genSalt(10);
         const hashPass = await bcrypt.hash(req.body.password, salt);
         const newUser = new User({
@@ -22,7 +38,7 @@ export async function registerUser(req, res, next) {
             "success": true
         });
     } catch (err) {
-        res.status(400).json(err);
+        res.status(400).json({ success: false, message: "Unable to register user", error: err });
     }
 }
 
@@ -31,9 +47,9 @@ export async function loginUser(req, res, next) {
         const doesUserExist = await User.findOne({
             email: req.body.email,
         }).select({ "password": 1 });
-        !doesUserExist && res.status(400).json("Email doesnot exist");
+        !doesUserExist && res.status(400).json({ success: false, message: "Email doesnot exist" });
         const validate = await bcrypt.compare(req.body.password, doesUserExist.password);
-        !validate && res.status(422).json("Incorrect password");
+        !validate && res.status(422).json({ success: false, message: "Incorrect password" });
         const user = await User.findOne({
             email: req.body.email,
         }).select({
