@@ -1,6 +1,7 @@
 import express from "express";
 import { authenticate } from "../middleware/authenticate.js";
 import * as orderServices from '../services/order_service.js';
+import { orderUpdateValidator, orderValidator } from "../validators/order_validator.js";
 
 const router = express();
 
@@ -11,10 +12,10 @@ router.get("/orders", authenticate, orderServices.getAllOrders);
 router.get("/orders/:id", authenticate, orderServices.getSingleOrders);
 
 //Create Order
-router.post("/orders", authenticate, orderServices.createOrders);
+router.post("/orders", authenticate, orderValidator, orderServices.createOrders);
 
 //Update Order
-router.put("/orders/:id", authenticate, orderServices.updateOrders);
+router.put("/orders/:id", authenticate, orderUpdateValidator, orderServices.updateOrders);
 
 //Delete Order
 router.delete("/orders/:id", authenticate, orderServices.deleteOrders);

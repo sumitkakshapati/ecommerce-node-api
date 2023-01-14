@@ -1,4 +1,5 @@
 import mongoose from 'mongoose';
+import order_status from '../contants/order_status';
 
 const orderSchema = mongoose.Schema({
     orderItems: [{
@@ -24,7 +25,7 @@ const orderSchema = mongoose.Schema({
     },
     status: {
         type: String,
-        default: 'processing',
+        default: order_status.processing,
     },
     totalPrice: {
         type: Number,
