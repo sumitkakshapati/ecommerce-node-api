@@ -1,4 +1,4 @@
-export default OrderStatus = {
+export default {
     processing: "processing",
     completed: "completed",
     cancelled: "cancelled",

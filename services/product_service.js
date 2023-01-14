@@ -17,7 +17,7 @@ export async function createProduct(req, res, next) {
     const newProduct = new Product(req.body);
     try {
         const saveProduct = await newProduct.save();
-        res.status(200).send(saveProduct);
+        res.status(200).send({ success: true, results: saveProduct });
     } catch (err) {
         res.status(400).json(err);
     }

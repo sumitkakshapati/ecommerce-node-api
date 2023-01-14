@@ -1,5 +1,5 @@
 import mongoose from 'mongoose';
-import order_status from '../contants/order_status';
+import order_status from '../contants/order_status.js';
 
 const orderSchema = mongoose.Schema({
     orderItems: [{
