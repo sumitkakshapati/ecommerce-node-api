@@ -47,9 +47,15 @@ export async function loginUser(req, res, next) {
         const doesUserExist = await User.findOne({
             email: req.body.email,
         }).select({ "password": 1 });
-        !doesUserExist && res.status(400).json({ success: false, message: "Email doesnot exist" });
+        if (!doesUserExist) {
+            res.status(400).json({ success: false, message: "Email doesnot exist" });
+            return;
+        }
         const validate = await bcrypt.compare(req.body.password, doesUserExist.password);
-        !validate && res.status(422).json({ success: false, message: "Incorrect password" });
+        if (!validate) {
+            res.status(422).json({ success: false, message: "Incorrect password" });
+            return;
+        }
         const user = await User.findOne({
             email: req.body.email,
         }).select({
