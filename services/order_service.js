@@ -2,13 +2,24 @@ import Order from "../models/Order.js";
 import Cart from '../models/Cart.js';
 import { productFields } from "./product_service.js";
 
+const orderFields = {
+    _id: 1,
+    orderItems: 1,
+    full_name: 1,
+    address: 1,
+    city: 1,
+    phone: 1,
+    status: 1,
+    totalPrice: 1
+}
+
 export async function getAllOrders(req, res, next) {
     let { per_page, page, status } = req.query;
     per_page = per_page ? parseInt(per_page) : 10;
     page = page ? parseInt(page) - 1 : 0;
     status = status ?? undefined;
 
-    const query = Order.find({ user: req.user._id }).limit(per_page).skip(page * per_page);
+    const query = Order.find({ user: req.user._id }).limit(per_page).skip(page * per_page).select(orderFields).populate("orderItems");
 
     if (["completed", "cancelled", "processing"].includes(status)) {
         query.find({ status: status });
@@ -23,7 +34,7 @@ export async function getAllOrders(req, res, next) {
 }
 
 export async function getSingleOrders(req, res, next) {
-    const order = await Order.findById(req.params.id);
+    const order = await Order.findById(req.params.id).select(orderFields).populate('orderItems');
 
     if (!order) {
         res.status(500).json({ success: false, message: "No order found" });
