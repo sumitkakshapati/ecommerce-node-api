@@ -15,7 +15,9 @@ export async function getAllCarts(req, res, next) {
             user: req.user._id,
             is_ordered: false,
         }).select(cartFields).populate("product", productFields);
-        res.status(200).json({ success: true, results: allProducts });
+
+        const totalPrice = allProducts.reduce((pv, e) => pv + e.toJSON().product.price * e.toJSON().quantity, 0);
+        res.status(200).json({ success: true, results: allProducts, totalPrice: totalPrice });
     } catch (e) {
         res.status(400).json({ success: false, "message": e })
     }
