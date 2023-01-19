@@ -23,6 +23,20 @@ export async function getAllCarts(req, res, next) {
     }
 }
 
+export async function totalCartPrice(req, res, next) {
+    try {
+        const allProducts = await Cart.find({
+            user: req.user._id,
+            is_ordered: false,
+        }).select(cartFields).populate("product", productFields);
+
+        const totalPrice = allProducts.reduce((pv, e) => pv + e.toJSON().product.price * e.toJSON().quantity, 0);
+        res.status(200).json({ success: true, totalPrice: totalPrice });
+    } catch (e) {
+        res.status(400).json({ success: false, "message": e })
+    }
+}
+
 export async function addToCarts(req, res, next) {
     try {
         const cartExist = await Cart.findOne({ product: req.body.product, is_ordered: false, user: req.user._id });

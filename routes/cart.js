@@ -17,4 +17,7 @@ router.put("/cart/:id", authenticate, cartUpdateValidator, cartServices.updateCa
 //Delete
 router.delete("/cart/:id", authenticate, cartServices.deleteCartProduct);
 
+//Read total cart price
+router.get("/cart/total", authenticate, cartServices.totalCartPrice);
+
 export default router;
