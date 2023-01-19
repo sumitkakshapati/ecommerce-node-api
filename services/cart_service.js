@@ -12,7 +12,7 @@ export const cartFields = {
 export async function getAllCarts(req, res, next) {
     try {
         const allProducts = await Cart.find({
-            user_id: req.user._id,
+            user: req.user._id,
             is_ordered: false,
         }).select(cartFields).populate("product", productFields);
         res.status(200).json({ success: true, results: allProducts });
@@ -23,7 +23,7 @@ export async function getAllCarts(req, res, next) {
 
 export async function addToCarts(req, res, next) {
     try {
-        const cartExist = await Cart.findOne({ product: req.body.product, is_ordered: false });
+        const cartExist = await Cart.findOne({ product: req.body.product, is_ordered: false, user: req.user._id });
         if (cartExist) {
             res.status(400).json({ "success": false, "message": "Product already exists" });
         } else {
@@ -45,9 +45,9 @@ export async function addToCarts(req, res, next) {
 
 export async function updateCartsProductCount(req, res, next) {
     try {
-        const cartExist = await Cart.findOne({ _id: req.params.id, is_ordered: false });
+        const cartExist = await Cart.findOne({ _id: req.params.id, is_ordered: false, user: req.user._id, });
         if (cartExist) {
-            const newCart = await Cart.findOneAndUpdate({ _id: req.params.id }, { quantity: req.body.quantity }, { new: true }).select(cartFields).populate("product", productFields);
+            const newCart = await Cart.findOneAndUpdate({ _id: req.params.id, user: req.user._id, }, { quantity: req.body.quantity }, { new: true }).select(cartFields).populate("product", productFields);
             res.status(200).json({ success: true, results: newCart });
         } else {
             res.status(400).json({ "success": false, "message": "Unable to find products" });
