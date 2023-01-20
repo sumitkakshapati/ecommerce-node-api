@@ -31,7 +31,7 @@ export async function getSingleProduct(req, res, next) {
             if (!doc) {
                 res.status(404).json({ "success": false, "message": "Product not found" });
             } else {
-                const _doesExist = await Cart.findOne({ product: doc._id, user: req.user._id });
+                const _doesExist = await Cart.findOne({ product: doc._id, user: req.user._id, is_ordered: false });
                 res.status(200).json({
                     success: true,
                     results: {

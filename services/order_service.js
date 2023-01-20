@@ -1,6 +1,5 @@
 import Order from "../models/Order.js";
 import Cart from '../models/Cart.js';
-import { productFields } from "./product_service.js";
 
 const orderFields = {
     _id: 1,
