@@ -1,5 +1,6 @@
 import Order from "../models/Order.js";
 import Cart from '../models/Cart.js';
+import { productFields } from "./product_service.js";
 
 const orderFields = {
     _id: 1,
@@ -12,13 +13,32 @@ const orderFields = {
     totalPrice: 1
 }
 
+const orderItemFields = {
+    _id: 1,
+    quantity: 1,
+    product: 1
+}
+
 export async function getAllOrders(req, res, next) {
     let { per_page, page, status } = req.query;
     per_page = per_page ? parseInt(per_page) : 10;
     page = page ? parseInt(page) - 1 : 0;
     status = status ?? undefined;
 
-    const query = Order.find({ user: req.user._id }).limit(per_page).skip(page * per_page).select(orderFields).populate("orderItems");
+    const query = Order.find({ user: req.user._id })
+        .limit(per_page)
+        .skip(page * per_page)
+        .select(orderFields)
+        .populate({
+            path: "orderItems",
+            select: orderItemFields,
+            model: "Cart",
+            populate: {
+                path: "product",
+                model: "Product",
+                select: productFields,
+            }
+        })
 
     if (["completed", "cancelled", "processing"].includes(status)) {
         query.find({ status: status });
@@ -33,7 +53,18 @@ export async function getAllOrders(req, res, next) {
 }
 
 export async function getSingleOrders(req, res, next) {
-    const order = await Order.findById(req.params.id).select(orderFields).populate('orderItems');
+    const order = await Order.findById(req.params.id)
+        .select(orderFields)
+        .populate({
+            path: "orderItems",
+            select: orderItemFields,
+            model: "Cart",
+            populate: {
+                path: "product",
+                model: "Product",
+                select: productFields,
+            }
+        });
 
     if (!order) {
         res.status(500).json({ success: false, message: "No order found" });
@@ -80,7 +111,18 @@ export async function createOrders(req, res, next) {
             })
         );
     }
-    res.send({ status: true, results: order });
+    const _orders = await Order.findOne({ _id: order._id }).select(orderFields)
+        .populate({
+            path: "orderItems",
+            select: orderItemFields,
+            model: "Cart",
+            populate: {
+                path: "product",
+                model: "Product",
+                select: productFields,
+            }
+        });
+    res.send({ status: true, results: _orders });
 }
 
 export async function updateOrders(req, res, next) {
