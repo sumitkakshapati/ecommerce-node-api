@@ -74,12 +74,12 @@ export async function getProductCategory(req, res, next) {
 
 export async function getAllProducts(req, res, next) {
     try {
-        let { per_page, page, q } = req.query;
+        let { per_page, page, q, categories } = req.query;
         per_page = per_page ? parseInt(per_page) : 10;
         page = page ? parseInt(page) - 1 : 0;
         q = q ? q : undefined;
+        categories = categories ? categories : undefined;
         let query = {};
-
         if (q) {
             query = {
                 $or: [
@@ -87,6 +87,13 @@ export async function getAllProducts(req, res, next) {
                     { "brand": { $regex: new RegExp(q, "i") } },
                     { 'catagories': { $regex: new RegExp(q, "i") } }
                 ]
+            }
+        }
+
+        if (categories) {
+            query = {
+                ...query,
+                'catagories': { $regex: new RegExp(categories, "i") },
             }
         }
 
