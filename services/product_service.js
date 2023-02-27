@@ -47,6 +47,31 @@ export async function getSingleProduct(req, res, next) {
     }
 }
 
+export async function getProductCategory(req, res, next) {
+    try {
+        const doc = await Product.find().select({ "catagories": 1 });
+        if (!doc) {
+            res.status(404).json({ "success": false, "message": "Product Category not found" });
+        } else {
+            const categories = [];
+            for (var i = 0; i < doc.length; i++) {
+                doc[i].catagories.forEach((value) => {
+                    if (!categories.includes(value)) {
+                        categories.push(value);
+                    }
+                });
+            }
+            res.status(200).json({
+                success: true,
+                results: categories,
+            });
+        }
+    } catch (err) {
+        console.log(err);
+        res.status(400).json(err);
+    }
+}
+
 export async function getAllProducts(req, res, next) {
     try {
         let { per_page, page, q } = req.query;

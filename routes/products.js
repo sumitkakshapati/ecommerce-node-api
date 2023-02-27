@@ -10,6 +10,9 @@ router.post("/products/create", authenticate, productValidator, productService.c
 //Read
 router.get("/products", authenticate, productService.getAllProducts);
 
+//Read Catwgories
+router.get("/products/categories", authenticate, productService.getProductCategory);
+
 //Get Single Products
 router.get("/products/:id", authenticate, productService.getSingleProduct);
 
