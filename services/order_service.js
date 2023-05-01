@@ -74,6 +74,7 @@ export async function getSingleOrders(req, res, next) {
 }
 
 export async function createOrders(req, res, next) {
+    console.log(req.body);
     const allCarts = await Cart.find({ user_id: req.user._id, is_ordered: false }).populate('product');
 
     if (allCarts.length == 0) {
@@ -126,6 +127,7 @@ export async function createOrders(req, res, next) {
 }
 
 export async function updateOrders(req, res, next) {
+    console.log(req.body);
     try {
         const updatedOrder = await Order.findByIdAndUpdate(
             req.params.id,
@@ -143,6 +145,7 @@ export async function updateOrders(req, res, next) {
 }
 
 export async function deleteOrders(req, res, next) {
+    console.log(req.body);
     Order.findByIdAndRemove(req.params.id)
         .then(async (order) => {
             if (order) {

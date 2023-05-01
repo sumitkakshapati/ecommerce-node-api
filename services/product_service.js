@@ -14,6 +14,7 @@ export const productFields = {
 };
 
 export async function createProduct(req, res, next) {
+    console.log(req.body);
     const newProduct = new Product(req.body);
     try {
         const saveProduct = await newProduct.save();
@@ -118,6 +119,7 @@ export async function getAllProducts(req, res, next) {
 }
 
 export async function updateSingleProduct(req, res, next) {
+    console.log(req.body);
     if (req.body.userId == req.params.id) {
         try {
             const updatedProduct = await Product.findByIdAndUpdate(

@@ -7,6 +7,7 @@ const router = express.Router()
 
 export async function registerUser(req, res, next) {
     try {
+        console.log(req.body);
         const doesEmailExist = await User.findOne({
             email: req.body.email,
         });
@@ -44,6 +45,7 @@ export async function registerUser(req, res, next) {
 
 export async function loginUser(req, res, next) {
     try {
+        console.log(req.body);
         const doesUserExist = await User.findOne({
             email: req.body.email,
         }).select({ "password": 1 });

@@ -22,6 +22,7 @@ export async function getAllUsers(req, res, next) {
 }
 
 export async function updateUser(req, res, next) {
+    console.log(req.body);
     if (req.body.userId == req.params.id) {
         if (req.body.password) {
             const salt = await bcrypt.genSalt(10);
