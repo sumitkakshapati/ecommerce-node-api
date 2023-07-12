@@ -11,4 +11,6 @@ router.post("/login", authLoginValidator, authServices.loginUser);
 
 router.post("/login/social/google", authSocialLoginValidator, authServices.googleLoginUser);
 
+router.post("/login/social/facebook", authSocialLoginValidator, authServices.facebookLoginUser);
+
 export default router;

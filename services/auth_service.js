@@ -92,52 +92,17 @@ export async function loginUser(req, res, next) {
 export async function facebookLoginUser(req, res, next) {
     try {
         console.log(req.body);
-        facebookAuthenticate(req.body.token).then((res) => {
+        facebookAuthenticate(req.body.token).then((response) => {
             req.body.facebook = JSON.parse(response);
             if (req.body.facebook && !req.body.facebook.email)
                 req.body.facebook.email = `${req.body.facebook.id}@facebook.com`;
             if (req.body.facebook && req.body.facebook.error) {
                 res.status(400).json({ "success": false, "results": "Token is invalid" })
             }
+            socialLogin(req.body.facebook.email,req.body.facebook.name,res);
         },).catch((err) => {
             res.status(500).json(err);
         })
-        // const doesUserExist = await User.findOne({
-        //     email: req.body.email,
-        // }).select({ "password": 1 });
-        // if (!doesUserExist) {
-        //     res.status(400).json({ success: false, message: "Email doesnot exist" });
-        //     return;
-        // }
-        // const validate = await bcrypt.compare(req.body.password, doesUserExist.password);
-        // if (!validate) {
-        //     res.status(422).json({ success: false, message: "Incorrect password" });
-        //     return;
-        // }
-        // const user = await User.findOne({
-        //     email: req.body.email,
-        // }).select({
-        //     "_id": 1,
-        //     "name": 1,
-        //     "email": 1,
-        //     "phone": 1,
-        //     "address": 1
-        // });
-
-        // const _tokenData = {
-        //     _id: user._id,
-        //     name: user.name,
-        //     email: user.email,
-        //     phone: user.phone
-        // }
-
-        // const token = await generateWebToken(_tokenData);
-
-        // const _response = {
-        //     "success": true,
-        //     "results": user,
-        //     "token": token
-        // }
     } catch (err) {
         res.status(500).json(err);
     }
