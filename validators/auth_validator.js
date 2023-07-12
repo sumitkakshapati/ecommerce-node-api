@@ -24,6 +24,11 @@ const schemaForLogin = Joi.object({
     password: passwordSchema.label("Password").required(),
 });
 
+// Social Validation schema
+const schemaForSocialLogin = Joi.object({
+    token: Joi.string().label("Token").required(),
+});
+
 /**
  * Validate create/update user request.
  *
@@ -56,4 +61,20 @@ function authLoginValidator(req, res, next) {
         });
 }
 
-export { authRegisterValidator, authLoginValidator };
+/**
+ * Validate create/update user request.
+ *
+ * @param   {Object}   req
+ * @param   {Object}   res
+ * @param   {Function} next
+ * @returns {Promise}
+ */
+function authSocialLoginValidator(req, res, next) {
+    return validate(req.body, schemaForSocialLogin)
+        .then(() => next())
+        .catch((err) => {
+            next(err);
+        });
+}
+
+export { authRegisterValidator, authLoginValidator,authSocialLoginValidator };

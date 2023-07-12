@@ -22,9 +22,8 @@ const UserSchema = new mongoose.Schema(
     },
     password: {
       type: String,
-      required: true,
+      required: false,
       trim: true,
-      minLength: 7,
       validator(value) {
         if (value.toLowerCase().include("password")) {
           throw new Error("Cannot contain password as PASSWORD");
@@ -37,7 +36,7 @@ const UserSchema = new mongoose.Schema(
     },
     phone: {
       type: String,
-      required: true,
+      required: false,
       maxLength: 10,
     },
     address: {
