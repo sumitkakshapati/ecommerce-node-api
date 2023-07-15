@@ -42,7 +42,10 @@ const UserSchema = new mongoose.Schema(
     address: {
       type: String,
       default: "",
-    }
+    },
+    profile: {
+      type: String,
+    },
   },
   {
     timestamps: true,

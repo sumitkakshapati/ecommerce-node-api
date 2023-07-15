@@ -3,12 +3,14 @@ import User from "../models/User.js";
 import bcrypt from "bcrypt";
 import { generateWebToken } from "../middleware/jwt.js";
 import https from 'https';
+import { getStorage, ref, getDownloadURL, uploadBytesResumable } from 'firebase/storage'
 
 const router = express.Router()
 
 export async function registerUser(req, res, next) {
     try {
         console.log(req.body);
+
         const doesEmailExist = await User.findOne({
             email: req.body.email,
         });
@@ -34,6 +36,22 @@ export async function registerUser(req, res, next) {
             phone: req.body.phone,
             address: req.body.address,
         });
+        if (req.file) {
+            const currentDateTime = Date.now();
+            const storage = getStorage();
+            const storageRef = ref(storage, `files/${req.file.originalname + "       " + currentDateTime}`);
+            const metadata = {
+                contentType: req.file.mimetype,
+            };
+
+            // Upload the file in the bucket storage
+            const snapshot = await uploadBytesResumable(storageRef, req.file.buffer, metadata);
+            //by using uploadBytesResumable we can control the progress of uploading like pause, resume, cancel
+
+            // Grab the public url
+            const downloadURL = await getDownloadURL(snapshot.ref);
+            newUser.profile = downloadURL
+        }
         const user = await newUser.save();
         res.status(201).json({
             "message": "Registered successfully",
@@ -66,6 +84,7 @@ export async function loginUser(req, res, next) {
             "name": 1,
             "email": 1,
             "phone": 1,
+            "profile": 1,
             "address": 1
         });
 
@@ -99,7 +118,7 @@ export async function facebookLoginUser(req, res, next) {
             if (req.body.facebook && req.body.facebook.error) {
                 res.status(400).json({ "success": false, "results": "Token is invalid" })
             }
-            socialLogin(req.body.facebook.email,req.body.facebook.name,res);
+            socialLogin(req.body.facebook.email, req.body.facebook.name, res);
         },).catch((err) => {
             res.status(500).json(err);
         })
@@ -126,7 +145,7 @@ export async function googleLoginUser(req, res, next) {
 }
 
 
-async function socialLogin(email, fullName,res) {
+async function socialLogin(email, fullName, res) {
     const doesUserExist = await User.findOne({ email: email }).select({
         "_id": 1,
         "name": 1,

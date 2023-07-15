@@ -11,6 +11,9 @@ import * as Sentry from '@sentry/node';
 import morgan from 'morgan';
 import helmet from 'helmet';
 import cors from 'cors';
+import {initializeApp} from 'firebase/app';
+import firebase_config from './contants/firebase_config.js';
+import multer from 'multer';
 
 dotenv.config();
 
@@ -36,6 +39,8 @@ mongoose
 .catch((err) => {
   console.log(err);
 });
+
+initializeApp(firebase_config)
 
 app.use(express.json());
 app.use(morgan("tiny"));
