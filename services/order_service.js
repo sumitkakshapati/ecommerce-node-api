@@ -10,7 +10,8 @@ const orderFields = {
     city: 1,
     phone: 1,
     status: 1,
-    totalPrice: 1
+    totalPrice: 1,
+    dateOrdered: 1,
 }
 
 const orderItemFields = {
