@@ -7,6 +7,9 @@ const router = express.Router();
 //Create
 router.post("/products/create", authenticate, productValidator, productService.createProduct);
 
+//Read Features Images
+router.get("/products/featured", authenticate, productService.getFeaturedProducts);
+
 //Read
 router.get("/products", authenticate, productService.getAllProducts);
 

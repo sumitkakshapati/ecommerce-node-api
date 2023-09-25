@@ -73,6 +73,17 @@ export async function getProductCategory(req, res, next) {
     }
 }
 
+export async function getFeaturedProducts(req, res, next) {
+    const data = {
+        "success": true,
+        "data": [
+            "https://media.istockphoto.com/id/1455739518/photo/attractive-young-asia-adult-woman-using-a-mobile-phone-while-relaxing-on-the-sofa-at-home.jpg?s=2048x2048&w=is&k=20&c=6oCLvQaI46iXOcTT3T9KLA-zIRUwl4OdSFNCD_OCUUc=",
+            "https://images.unsplash.com/photo-1544725121-be3bf52e2dc8?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=3567&q=80"
+        ],
+    };
+    return res.status(200).send(data);
+}
+
 export async function getAllProducts(req, res, next) {
     try {
         let { per_page, page, q, categories } = req.query;
