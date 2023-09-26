@@ -13,6 +13,15 @@ export const productFields = {
     "catagories": 1,
 };
 
+export const productListFields = {
+    "_id": 1,
+    "name": 1,
+    "image": 1,
+    "brand": 1,
+    "price": 1,
+    "catagories": 1,
+};
+
 export async function createProduct(req, res, next) {
     console.log(req.body);
     const newProduct = new Product(req.body);
@@ -109,7 +118,7 @@ export async function getAllProducts(req, res, next) {
             }
         }
 
-        Product.find(query).select(productFields).limit(per_page).skip(page * per_page).exec((err, doc) => {
+        Product.find(query).select(productListFields).limit(per_page).skip(page * per_page).exec((err, doc) => {
             if (err) {
                 res.status(500).send(err);
             }
