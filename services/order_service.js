@@ -4,6 +4,14 @@ import { productFields } from "./product_service.js";
 
 const orderFields = {
     _id: 1,
+    status: 1,
+    totalPrice: 1,
+    dateOrdered: 1,
+    code: 1,
+}
+
+const orderDetailsFields = {
+    _id: 1,
     orderItems: 1,
     full_name: 1,
     address: 1,
@@ -12,6 +20,7 @@ const orderFields = {
     status: 1,
     totalPrice: 1,
     dateOrdered: 1,
+    code: 1,
 }
 
 const orderItemFields = {
@@ -29,23 +38,18 @@ export async function getAllOrders(req, res, next) {
     const query = Order.find({ user: req.user._id })
         .limit(per_page)
         .skip(page * per_page)
-        .select(orderFields)
-        .populate({
-            path: "orderItems",
-            select: orderItemFields,
-            model: "Cart",
-            populate: {
-                path: "product",
-                model: "Product",
-                select: productFields,
-            }
-        })
+        .select({ ...orderFields, orderItems: 1 });
 
     if (["completed", "cancelled", "processing"].includes(status)) {
         query.find({ status: status });
     }
 
     const orderList = await query;
+
+    for (let i = 0; i < orderList.length; i++) {
+        orderList[i]._doc.quantity = orderList[i].orderItems.length;
+        delete orderList[i]._doc.orderItems;
+    }
 
     if (!orderList) {
         res.status(500).json({ success: false, message: "Unable to fetch orders" });
@@ -55,7 +59,7 @@ export async function getAllOrders(req, res, next) {
 
 export async function getSingleOrders(req, res, next) {
     const order = await Order.findById(req.params.id)
-        .select(orderFields)
+        .select(orderDetailsFields)
         .populate({
             path: "orderItems",
             select: orderItemFields,
@@ -66,6 +70,8 @@ export async function getSingleOrders(req, res, next) {
                 select: productFields,
             }
         });
+
+    order._doc.quantity = order.orderItems.length;
 
     if (!order) {
         res.status(500).json({ success: false, message: "No order found" });
@@ -100,6 +106,7 @@ export async function createOrders(req, res, next) {
         totalPrice: totalPrice,
         user: req.user._id,
         full_name: req.body.full_name,
+        code: generateUniqueOrderCode(),
     });
 
     order = await order.save();
@@ -124,6 +131,9 @@ export async function createOrders(req, res, next) {
                 select: productFields,
             }
         });
+
+    _orders._doc.quantity = _orders.orderItems.length;
+
     res.send({ status: true, results: _orders });
 }
 
@@ -165,4 +175,16 @@ export async function deleteOrders(req, res, next) {
         .catch((err) => {
             return res.status(400).json({ success: false, error: err });
         });
+}
+
+function generateUniqueOrderCode() {
+    const characters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
+    let code = '';
+
+    for (let i = 0; i < 10; i++) {
+        const randomIndex = Math.floor(Math.random() * characters.length);
+        code += characters.charAt(randomIndex);
+    }
+
+    return `OC-${code}`;
 }

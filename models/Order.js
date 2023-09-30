@@ -40,7 +40,11 @@ const orderSchema = mongoose.Schema({
         type: Date,
         default: Date.now,
         required: true
-    }
+    },
+    code: {
+        type: String,
+        required: true
+    },
 })
 
 const Order = mongoose.model("Order", orderSchema);
