@@ -96,3 +96,15 @@ export async function deleteCartProduct(req, res, next) {
         });
     }
 }
+
+export async function countCarts(req, res, next) {
+    try {
+        const allProducts = await Cart.find({
+            user: req.user._id,
+            is_ordered: false,
+        }).select(cartFields);
+        res.status(200).json({ success: true, counts: allProducts.length });
+    } catch (e) {
+        res.status(400).json({ success: false, "message": e })
+    }
+}

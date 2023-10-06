@@ -20,4 +20,7 @@ router.delete("/cart/:id", authenticate, cartServices.deleteCartProduct);
 //Read total cart price
 router.get("/cart/total", authenticate, cartServices.totalCartPrice);
 
+//Read total cart price
+router.get("/cart/count", authenticate, cartServices.countCarts);
+
 export default router;
