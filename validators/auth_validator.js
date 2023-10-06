@@ -13,7 +13,7 @@ const schemaForRegister = Joi.object({
         .max(90)
         .required(),
     email: emailSchema.label('Email').required(),
-    phone: phoneSchema.label('Email').required(),
+    phone: phoneSchema.label('Phone').required(),
     address: Joi.string().label("Address").required(),
     password: passwordSchema.label("Password").required(),
 });
