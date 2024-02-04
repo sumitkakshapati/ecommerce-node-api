@@ -46,7 +46,7 @@ export async function addToCarts(req, res, next) {
         } else {
             const doesProductExist = await Product.findOne({ _id: req.body.product }).select({ _id: 1 });
             if (doesProductExist) {
-                const newCart = Cart({ ...req.body, user: req.user._id });
+                const newCart = Cart({ ...req.body, quantity: 1, user: req.user._id });
                 const _savedItem = await newCart.save();
                 const cartItem = await Cart.findOne({ _id: _savedItem._id }).select(cartFields).populate("product", productFields);
 

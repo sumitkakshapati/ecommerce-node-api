@@ -3,7 +3,6 @@ import validate from '../utils/validate.js';
 
 // Validation schema for cart
 const schemaForCart = Joi.object({
-    quantity: Joi.number().min(1).label('Quantity').required(),
     product: Joi.string().label("Product ID").required(),
 });
 
