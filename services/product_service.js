@@ -122,6 +122,9 @@ export async function getAllProducts(req, res, next) {
             if (err) {
                 res.status(500).send(err);
             }
+            
+            shuffleProducts(doc);
+
             Product.countDocuments(query).exec((count_error, count) => {
                 if (err) {
                     res.status(500).send(err);
@@ -169,4 +172,10 @@ export async function deleteSingleProducts(req, res, next) {
     } catch (e) {
         res.status(500).send();
     }
+}
+
+function shuffleProducts(products) {
+    const shuffled = products.slice().sort(() => Math.random() - 0.5);
+    products.length = 0;
+    products.push(...shuffled);
 }
