@@ -59,26 +59,30 @@ export async function getAllOrders(req, res, next) {
 }
 
 export async function getSingleOrders(req, res, next) {
-    const order = await Order.findById(req.params.id)
-        .select(orderDetailsFields)
-        .populate({
-            path: "orderItems",
-            select: orderItemFields,
-            model: "Cart",
-            populate: {
-                path: "product",
-                model: "Product",
-                select: productFields,
-            }
-        });
-
-    order._doc.quantity = order.orderItems.length;
-
-    if (!order) {
-        res.status(500).json({ success: false, message: "No order found" });
+    try{
+        const order = await Order.findById(req.params.id)
+            .select(orderDetailsFields)
+            .populate({
+                path: "orderItems",
+                select: orderItemFields,
+                model: "Cart",
+                populate: {
+                    path: "product",
+                    model: "Product",
+                    select: productFields,
+                }
+            });
+    
+        order._doc.quantity = order.orderItems.length;
+    
+        if (!order) {
+            res.status(500).json({ success: false, message: "No order found" });
+        }
+    
+        res.send({ success: true, results: order });
+    } catch(e) {
+        res.status(400).send({ success: false, message: "Invalid Order Id" });
     }
-
-    res.send({ success: true, results: order });
 }
 
 export async function createOrders(req, res, next) {
@@ -168,7 +172,16 @@ export async function updateOrders(req, res, next) {
 export async function completeOrderPayment(req, res, next) {
   console.log(req.body);
   try {
-      const updatedOrder = await Order.findByIdAndUpdate(
+      const _orders = await Order.findOne({ _id: req.body.order_id });
+      if (!_orders) {
+        res.status(400).json({ success: false, message: "No order found" });
+        return
+      }
+      if (_orders.status != order_status.paymentPending){
+         res.status(400).json({ success: false, message: "Payment is already completed for this order"});
+         return
+      }
+      await Order.findByIdAndUpdate(
         req.body.order_id,
         {
           $set: {
