@@ -53,7 +53,7 @@ export async function getAllOrders(req, res, next) {
     }
 
     if (!orderList) {
-        res.status(500).json({ success: false, message: "Unable to fetch orders" });
+        res.status(404).json({ success: false, message: "Unable to fetch orders" });
     }
     res.send({ success: true, results: orderList });
 }
@@ -76,7 +76,7 @@ export async function getSingleOrders(req, res, next) {
         order._doc.quantity = order.orderItems.length;
     
         if (!order) {
-            res.status(500).json({ success: false, message: "No order found" });
+            res.status(404).json({ success: false, message: "No order found" });
         }
     
         res.send({ success: true, results: order });
