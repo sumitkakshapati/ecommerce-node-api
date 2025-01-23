@@ -1,7 +1,7 @@
 import express from "express";
 import { authenticate } from "../middleware/authenticate.js";
 import * as orderServices from '../services/order_service.js';
-import { orderUpdateValidator, orderValidator } from "../validators/order_validator.js";
+import { orderUpdateValidator, orderValidator,completeOrderValidator } from "../validators/order_validator.js";
 
 const router = express();
 
@@ -13,6 +13,14 @@ router.get("/orders/:id", authenticate, orderServices.getSingleOrders);
 
 //Create Order
 router.post("/orders", authenticate, orderValidator, orderServices.createOrders);
+
+//Complete Order Payment
+router.post(
+  "/orders/complete-payment",
+  authenticate,
+  completeOrderValidator,
+  orderServices.completeOrderPayment
+);
 
 //Update Order
 router.put("/orders/:id", authenticate, orderUpdateValidator, orderServices.updateOrders);

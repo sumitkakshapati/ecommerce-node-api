@@ -25,7 +25,7 @@ const orderSchema = mongoose.Schema({
     },
     status: {
         type: String,
-        default: order_status.processing,
+        default: order_status.paymentPending,
     },
     totalPrice: {
         type: Number,

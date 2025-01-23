@@ -10,11 +10,18 @@ const schemaForOrder = Joi.object({
     phone: Joi.string().label("Phone").required(),
 });
 
+// Validation schema for complete order
+const schemaForCompleteOrder = Joi.object({
+  order_id: Joi.string().label("Order Id").required(),
+  ref_id: Joi.string().label("RefId").required(),
+});
+
 
 // Validation schema for order
 const schemaForOrderUpdate = Joi.object({
-    status: Joi.string().valid(order_status.cancelled, order_status.processing, order_status.completed).required(),
+    status: Joi.string().valid(order_status.cancelled, order_status.completed).required(),
 });
+
 
 /**
  * Validate create order request.
@@ -48,4 +55,22 @@ function orderUpdateValidator(req, res, next) {
         });
 }
 
-export { orderValidator, orderUpdateValidator };
+/**
+ * Validate complete order request.
+ *
+ * @param   {Object}   req
+ * @param   {Object}   res
+ * @param   {Function} next
+ * @returns {Promise}
+ */
+function completeOrderValidator(req, res, next) {
+    return validate(req.body, schemaForCompleteOrder)
+      .then(() => next())
+      .catch((err) => {
+        next(err);
+      });
+}
+
+
+
+export { orderValidator, orderUpdateValidator, completeOrderValidator };

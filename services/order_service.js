@@ -1,6 +1,7 @@
 import Order from "../models/Order.js";
 import Cart from '../models/Cart.js';
 import { productFields } from "./product_service.js";
+import order_status from "../contants/order_status.js";
 
 const orderFields = {
     _id: 1,
@@ -140,19 +141,46 @@ export async function createOrders(req, res, next) {
 export async function updateOrders(req, res, next) {
     console.log(req.body);
     try {
-        const updatedOrder = await Order.findByIdAndUpdate(
-            req.params.id,
-            {
-                $set: {
-                    status: req.body.status
+        if (req.body.status == order_status.completed || req.body.status == order_status.cancelled){
+            const updatedOrder = await Order.findByIdAndUpdate(
+                req.params.id,
+                {
+                    $set: {
+                        status: req.body.status
+                    },
                 },
-            },
-            { new: true }
-        );
-        res.status(200).json({ success: true, results: updatedOrder });
+                { new: true }
+            );
+            res.status(200).json({ success: true, results: updatedOrder });
+        } else {
+             res
+               .status(400)
+               .json({
+                 success: false,
+                 message: "Status cannot be updated to " + req.body.status,
+               });
+        }
     } catch (err) {
         res.status(500).send({ success: true, results: err });
     }
+}
+
+export async function completeOrderPayment(req, res, next) {
+  console.log(req.body);
+  try {
+      const updatedOrder = await Order.findByIdAndUpdate(
+        req.body.order_id,
+        {
+          $set: {
+            status: order_status.processing,
+          },
+        },
+        { new: true }
+      );
+      res.status(200).json({ success: true, message: "Payment Completed Successfully" });
+  } catch (err) {
+    res.status(500).send({ success: true, results: err });
+  }
 }
 
 export async function deleteOrders(req, res, next) {
